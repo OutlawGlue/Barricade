@@ -8,58 +8,23 @@ namespace Barricade
     {
         private static void Main()
         {
-            int[] gridSize = new int[2];
-            int[] start = new int[2];
-            int[] target = new int[2];
+            int[] gridSize = { 9, 9 };
 
-            bool valid = false;
-
-            while (!valid)
-            {
-                //Get basic inputs:
-                Console.Write("Enter grid size (rows, cols): ");
-                gridSize = Console.ReadLine().Split(',').Select(int.Parse).ToArray();
-                Console.Write("Enter starting location (row, col):");
-                start = Console.ReadLine().Split(',').Select(int.Parse).ToArray();
-                Console.Write("Enter target location (row, col):");
-                target = Console.ReadLine().Split(',').Select(int.Parse).ToArray();
-
-                //Validate inputs:
-                if (gridSize[0] <= 0 || gridSize[1] <= 0)
-                {
-                    Console.WriteLine("Grid size must be positive integers.");
-                    continue;
-                }
-
-                if (start[0] < 0 || start[0] >= gridSize[0] || start[1] < 0 || start[1] >= gridSize[1])
-                {
-                    Console.WriteLine("Starting location must be within the grid.");
-                    continue;
-                }
-
-                if (target[0] < 0 || target[0] >= gridSize[0] || target[1] < 0 || target[1] >= gridSize[1])
-                {
-                    Console.WriteLine("Target location must be within the grid.");
-                    continue;
-                }
-
-                valid = true;
-            }
+            Console.WriteLine("Welcome to Barricade!");
+            Console.Write("Player 1 name: "); string p1Name = Console.ReadLine();
+            Console.Write("Player 2 name: "); string p2Name = Console.ReadLine();
 
             //Create required objects:
             Grid grid = new Grid(gridSize[0], gridSize[1]);
-            Node startNode = grid.GetCell(start[0], start[1]);
-            Node targetNode = grid.GetCell(target[0], target[1]);
-
-            Algorithm algorithm = new Algorithm(grid);
-            //Path path = algorithm.FindPath(startNode, targetNode);
-
-            //foreach (Node node in path.Nodes)
-            //{
-            //    Console.WriteLine($"({node.Row}, {node.Col})");
-            //}
-
             Board board = new Board(grid);
+
+            Node p1start = new Node(0, 4);
+            Player player1 = new Player(p1start, 8, p1Name);
+
+            Node p2start = new Node(8, 4);
+            Player player2 = new Player(p1start, 0, p2Name);
+
+            Game game = new Game(grid, board, player1, player2);
         }
     }
 }

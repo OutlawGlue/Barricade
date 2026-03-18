@@ -9,11 +9,19 @@ namespace Barricade
 {
     internal class Player
     {
+        private string name;
         private Node position;
 
-        public Player(Node startPosition)
+        public Player(Node startPosition, int targetRow, string name)
         {
             position = startPosition;
+            this.name = name;
+        }
+
+        public string Name
+        {
+            get { return name; }
+            set { name = value; }
         }
 
         public Node Position

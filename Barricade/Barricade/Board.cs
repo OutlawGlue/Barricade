@@ -14,8 +14,6 @@ namespace Barricade
         public Board(Grid grid)
         {
             this.grid = grid;
-
-            DisplayBoard();
         }
 
         public void DisplayBoard()
