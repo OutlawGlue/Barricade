@@ -31,8 +31,7 @@ namespace Barricade
             {
                 board.DisplayBoard(player1, player2);
 
-                AskMove(currentPlayer);
-                //currentPlayer.Move();
+                currentPlayer.Move(AskMove(currentPlayer));
 
                 if (CheckWin(currentPlayer))
                 {
@@ -47,31 +46,58 @@ namespace Barricade
             }
         }
 
-        private void AskMove(Player current)
+        private int[] AskMove(Player current)
         {
-            int[] movement = { 0, 0 };
-            Console.WriteLine($"{current.Name} please make your move.");
+            bool valid = false;
+            int[] movement = new int[2];
 
-            ConsoleKeyInfo keyInfo = Console.ReadKey(true); // true = don't echo
-
-            switch (keyInfo.Key)
+            while (!valid)
             {
-                case ConsoleKey.UpArrow:
-                    movement[0] = -1;
-                    break;
+                movement[0] = 0; movement[1] = 0;
+                Console.WriteLine($"{current.Name} please make your move.");
 
-                case ConsoleKey.DownArrow:
-                    movement[0] = 1;
-                    break;
+                ConsoleKeyInfo keyInfo = Console.ReadKey(true); // true = don't echo
 
-                case ConsoleKey.LeftArrow:
-                    movement[1] = -1;
-                    break;
+                switch (keyInfo.Key)
+                {
+                    case ConsoleKey.UpArrow:
+                        movement[0] = -1;
+                        break;
 
-                case ConsoleKey.RightArrow:
-                    movement[1] = 1;
-                    break;
+                    case ConsoleKey.DownArrow:
+                        movement[0] = 1;
+                        break;
+
+                    case ConsoleKey.LeftArrow:
+                        movement[1] = -1;
+                        break;
+
+                    case ConsoleKey.RightArrow:
+                        movement[1] = 1;
+                        break;
+                }
+
+                if (ValidateMove(current, movement))
+                {
+                    valid = true;
+                }
+                else
+                {
+                    Console.WriteLine("Invalid move.");
+                }
             }
+
+            return movement;
+        }
+
+        private bool ValidateMove(Player current, int[] movement)
+        {
+            int[] newPos = { current.Position.Row + movement[0], current.Position.Col + movement[1] };
+
+            if (newPos[0] < 0 || newPos[0] >= grid.Rows || newPos[1] < 0 || newPos[1] >= grid.Rows)
+                return false;
+            else if ()
+            else return true;
         }
 
         private bool CheckWin(Player currentPlayer)

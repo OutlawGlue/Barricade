@@ -38,9 +38,10 @@ namespace Barricade
             get { return position; }
         }
 
-        public void Move(Node newPosition)
+        public void Move(int[] movement)
         {
-            position = newPosition;
+            position.Row += movement[0];
+            position.Col += movement[1];
         }
     }
 }

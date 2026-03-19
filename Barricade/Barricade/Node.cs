@@ -2,8 +2,8 @@
 {
     internal class Node
     {
-        private readonly int row;
-        private readonly int col;
+        private int row;
+        private int col;
         private readonly bool canAccess; //indicates if the node is walkable (not a wall)
         private Node parent; //reference to the parent node for path reconstruction
 
@@ -22,11 +22,13 @@
         public int Row
         {
             get { return row; }
+            set { row = value; }
         }
 
         public int Col
         {
             get { return col; }
+            set { col = value; }
         }
 
         public bool CanAccess
