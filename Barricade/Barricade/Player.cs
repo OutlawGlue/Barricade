@@ -1,9 +1,5 @@
 ﻿using AStarAlgorithm;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Barricade
 {
@@ -11,14 +7,15 @@ namespace Barricade
     {
         private string name;
         private char symbol;
-        private string colour; //change to color later
+        private ConsoleColor colour; //change to color later
         private Node position;
         private int targetRow;
 
-        public Player(Node startPosition, int targetRow, string name, char symbol)
+        public Player(Node startPosition, int targetRow, string name, char symbol, ConsoleColor colour)
         {
             this.name = name;
             this.symbol = symbol;
+            this.colour = colour;
             position = startPosition;
             this.targetRow = targetRow;
         }
@@ -33,6 +30,11 @@ namespace Barricade
         {
             get { return symbol; }
             set { symbol = value; }
+        }
+
+        public ConsoleColor Colour
+        {
+            get { return colour; }
         }
 
         public Node Position

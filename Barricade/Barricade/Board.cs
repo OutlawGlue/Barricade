@@ -1,9 +1,5 @@
 ﻿using AStarAlgorithm;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Barricade
 {
@@ -18,6 +14,8 @@ namespace Barricade
 
         public void DisplayBoard(Player player1, Player player2)
         {
+            ConsoleColor defaultColour = Console.ForegroundColor;
+
             for (int r = 0; r < grid.Rows * 2 + 1; r++)
             {
                 for (int c = 0; c < grid.Cols * 2 + 1; c++)
@@ -30,15 +28,17 @@ namespace Barricade
 
                         Node node = grid.GetNode(gridRow, gridCol);
 
-                        if (node.Row == player1.Position.Row &&
-                            node.Col == player1.Position.Col)
+                        if (node.Row == player1.Position.Row && node.Col == player1.Position.Col)
                         {
+                            Console.ForegroundColor = player1.Colour;
                             Console.Write(player1.Symbol);
+                            Console.ForegroundColor = defaultColour;
                         }
-                        else if (node.Row == player2.Position.Row &&
-                                 node.Col == player2.Position.Col)
+                        else if (node.Row == player2.Position.Row && node.Col == player2.Position.Col)
                         {
+                            Console.ForegroundColor = player2.Colour;
                             Console.Write(player2.Symbol);
+                            Console.ForegroundColor = defaultColour;
                         }
                         else
                         {
@@ -63,8 +63,6 @@ namespace Barricade
                 }
                 Console.WriteLine();
             }
-
-            Console.WriteLine($"Player at: {player1.Position.Row}, {player1.Position.Col}");
         }
     }
 }
