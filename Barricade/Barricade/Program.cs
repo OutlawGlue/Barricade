@@ -18,13 +18,15 @@ namespace Barricade
             Grid grid = new Grid(gridSize[0], gridSize[1]);
             Board board = new Board(grid);
 
-            Node p1start = new Node(0, 4);
-            Player player1 = new Player(p1start, 8, p1Name, '*');
+            Node p1start = new Node(8, 4);
+            Player player1 = new Player(p1start, 0, p1Name, '*');
 
-            Node p2start = new Node(8, 4);
-            Player player2 = new Player(p2start, 0, p2Name, '#');
+            Node p2start = new Node(0, 4);
+            Player player2 = new Player(p2start, 8, p2Name, '#');
 
-            Game game = new Game(grid, board, player1, player2);
+            new Game(grid, board, player1, player2);
+
+            Console.ReadLine();
         }
     }
 }

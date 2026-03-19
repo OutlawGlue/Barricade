@@ -36,7 +36,7 @@ namespace Barricade
                 if (CheckWin(currentPlayer))
                 {
                     gameWon = true;
-                    Console.WriteLine($"{currentPlayer} wins!");
+                    Console.WriteLine($"{currentPlayer.Name} wins!");
                 }
                 else
                 {
@@ -101,7 +101,10 @@ namespace Barricade
 
         private bool CheckWin(Player currentPlayer)
         {
-            return false;
+            if (currentPlayer.Position.Row == currentPlayer.TargetRow)
+                return true;
+            else
+                return false;
         }
     }
 }
