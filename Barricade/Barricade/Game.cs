@@ -79,7 +79,7 @@ namespace Barricade
                         break;
                 }
 
-                if (ValidateMove(current, movement, opponent))
+                if (ValidateMove(current, ref movement, opponent))
                 {
                     valid = true;
                 }
@@ -92,15 +92,31 @@ namespace Barricade
             return movement;
         }
 
-        private bool ValidateMove(Player current, int[] movement, Player opponent)
+        private bool ValidateMove(Player current, ref int[] movement, Player opponent)
         {
-            int[] newPos = { current.Position.Row + movement[0], current.Position.Col + movement[1] };
+            int newRow = current.Position.Row + movement[0];
+            int newCol = current.Position.Col + movement[1];
 
-            if (newPos[0] < 0 || newPos[0] >= grid.Rows || newPos[1] < 0 || newPos[1] >= grid.Rows)
+            //Check bounds:
+            if (newRow < 0 || newRow >= grid.Rows || newCol < 0 || newCol >= grid.Cols)
                 return false;
-            else if (newPos[0] == opponent.Position.Row && newPos[1] == opponent.Position.Row)
-                return false;
-            else return true;
+
+            //Check if into opponent:
+            if (newRow == opponent.Position.Row && newCol == opponent.Position.Col)
+            {
+                int jumpRow = current.Position.Row + movement[0] * 2;
+                int jumpCol = current.Position.Col + movement[1] * 2;
+
+                //Check jump within bounds:
+                if (jumpRow < 0 || jumpRow >= grid.Rows || jumpCol < 0 || jumpCol >= grid.Cols)
+                    return false;
+
+                //Apply jump:
+                movement[0] *= 2;
+                movement[1] *= 2;
+            }
+
+            return true;
         }
 
         private bool CheckWin(Player currentPlayer)
