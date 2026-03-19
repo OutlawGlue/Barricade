@@ -26,12 +26,13 @@ namespace Barricade
             Console.Clear();
 
             Player currentPlayer = player1;
+            Player opponentPlayer = player2;
 
             while (!gameWon)
             {
                 board.DisplayBoard(player1, player2);
 
-                currentPlayer.Move(AskMove(currentPlayer));
+                currentPlayer.Move(AskMove(currentPlayer, opponentPlayer));
 
                 if (CheckWin(currentPlayer))
                 {
@@ -40,13 +41,14 @@ namespace Barricade
                 }
                 else
                 {
+                    opponentPlayer = currentPlayer;
                     currentPlayer = currentPlayer == player1 ? player2 : player1;
                     Console.Clear();
                 }
             }
         }
 
-        private int[] AskMove(Player current)
+        private int[] AskMove(Player current, Player opponent)
         {
             bool valid = false;
             int[] movement = new int[2];
@@ -77,7 +79,7 @@ namespace Barricade
                         break;
                 }
 
-                if (ValidateMove(current, movement))
+                if (ValidateMove(current, movement, opponent))
                 {
                     valid = true;
                 }
@@ -90,11 +92,13 @@ namespace Barricade
             return movement;
         }
 
-        private bool ValidateMove(Player current, int[] movement)
+        private bool ValidateMove(Player current, int[] movement, Player opponent)
         {
             int[] newPos = { current.Position.Row + movement[0], current.Position.Col + movement[1] };
 
             if (newPos[0] < 0 || newPos[0] >= grid.Rows || newPos[1] < 0 || newPos[1] >= grid.Rows)
+                return false;
+            else if (newPos[0] == opponent.Position.Row && newPos[1] == opponent.Position.Row)
                 return false;
             else return true;
         }

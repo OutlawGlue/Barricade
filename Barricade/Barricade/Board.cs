@@ -5,7 +5,7 @@ namespace Barricade
 {
     internal class Board
     {
-        private Grid grid;
+        private readonly Grid grid;
 
         public Board(Grid grid)
         {
