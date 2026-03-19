@@ -39,7 +39,7 @@ namespace AStarAlgorithm
             get { return cols; }
         }
 
-        public Node GetCell(int row, int col)
+        public Node GetNode(int row, int col)
         {
             return grid[row, col];
         }

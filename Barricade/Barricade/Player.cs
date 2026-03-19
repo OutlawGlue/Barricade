@@ -10,18 +10,27 @@ namespace Barricade
     internal class Player
     {
         private string name;
+        private char symbol;
+        private string colour; //change to color later
         private Node position;
 
-        public Player(Node startPosition, int targetRow, string name)
+        public Player(Node startPosition, int targetRow, string name, char symbol)
         {
-            position = startPosition;
             this.name = name;
+            this.symbol = symbol;
+            position = startPosition;
         }
 
         public string Name
         {
             get { return name; }
             set { name = value; }
+        }
+
+        public char Symbol
+        {
+            get { return symbol; }
+            set { symbol = value; }
         }
 
         public Node Position

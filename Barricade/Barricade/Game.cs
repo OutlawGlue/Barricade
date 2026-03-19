@@ -29,7 +29,7 @@ namespace Barricade
 
             while (!gameWon)
             {
-                board.DisplayBoard();
+                board.DisplayBoard(player1, player2);
 
                 AskMove(currentPlayer);
                 //currentPlayer.Move();
