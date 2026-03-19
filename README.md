@@ -6,4 +6,4 @@ The goal is to develop a game where players **strategically block opponents and 
 
 The project focuses on creating a playable prototype that demonstrates the key mechanics, with scope to expand features and refine gameplay over time.
 
-It also uses my A-star algorithm to check whether there is still a valid path for both players.
+It also uses an adapted version of my A-star algorithm to check whether there is still a valid path for both players.
