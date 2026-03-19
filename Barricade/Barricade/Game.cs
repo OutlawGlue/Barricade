@@ -96,7 +96,6 @@ namespace Barricade
 
             if (newPos[0] < 0 || newPos[0] >= grid.Rows || newPos[1] < 0 || newPos[1] >= grid.Rows)
                 return false;
-            else if ()
             else return true;
         }
 
