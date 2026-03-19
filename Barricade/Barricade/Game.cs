@@ -33,9 +33,10 @@ namespace Barricade
                 board.DisplayBoard(player1, player2);
 
                 currentPlayer.Move(AskMove(currentPlayer, opponentPlayer));
-
+                Console.Clear();
                 if (CheckWin(currentPlayer))
                 {
+                    board.DisplayBoard(player1, player2);
                     gameWon = true;
                     Console.WriteLine($"{currentPlayer.Name} wins!");
                 }
@@ -43,7 +44,6 @@ namespace Barricade
                 {
                     opponentPlayer = currentPlayer;
                     currentPlayer = currentPlayer == player1 ? player2 : player1;
-                    Console.Clear();
                 }
             }
         }

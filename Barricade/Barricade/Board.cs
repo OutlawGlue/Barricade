@@ -15,6 +15,8 @@ namespace Barricade
         public void DisplayBoard(Player player1, Player player2)
         {
             ConsoleColor defaultColour = Console.ForegroundColor;
+            ConsoleColor grey = ConsoleColor.DarkGray;
+            Console.ForegroundColor = grey;
 
             for (int r = 0; r < grid.Rows * 2 + 1; r++)
             {
@@ -32,13 +34,13 @@ namespace Barricade
                         {
                             Console.ForegroundColor = player1.Colour;
                             Console.Write(player1.Symbol);
-                            Console.ForegroundColor = defaultColour;
+                            Console.ForegroundColor = grey;
                         }
                         else if (node.Row == player2.Position.Row && node.Col == player2.Position.Col)
                         {
                             Console.ForegroundColor = player2.Colour;
                             Console.Write(player2.Symbol);
-                            Console.ForegroundColor = defaultColour;
+                            Console.ForegroundColor = grey;
                         }
                         else
                         {
@@ -63,6 +65,8 @@ namespace Barricade
                 }
                 Console.WriteLine();
             }
+
+            Console.ForegroundColor = defaultColour;
         }
     }
 }
