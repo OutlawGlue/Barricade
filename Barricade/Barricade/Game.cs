@@ -152,126 +152,145 @@ namespace Barricade
             int prevCol = 4;
             bool prevIsVert = false;
 
-            do
+            while (true)
             {
-                Console.Clear();
-                board.DisplayBoard(player1, player2, horizontalWalls, verticalWalls, true, prevRow, prevCol, prevIsVert);
-            } while (!AskWall(ref prevRow, ref prevCol, ref prevIsVert));
+                bool isValid = ValidateWall(prevRow, prevCol, prevIsVert);
 
-            if (prevIsVert)
-            {
-                verticalWalls[prevRow, prevCol - 1] = true;
-                verticalWalls[prevRow + 1, prevCol - 1] = true;
-            }
-            else
-            {
-                horizontalWalls[prevRow - 1, prevCol] = true;
-                horizontalWalls[prevRow - 1, prevCol + 1] = true;
+                Console.Clear();
+                board.DisplayBoard(
+                    player1, player2,
+                    horizontalWalls, verticalWalls,
+                    true, prevRow, prevCol, prevIsVert,
+                    isValid);
+
+                bool placing = AskWall(ref prevRow, ref prevCol, ref prevIsVert);
+
+                //Clamp value after preview moved:
+                ClampPreview(ref prevRow, ref prevCol, prevIsVert);
+
+                if (placing)
+                {
+                    if (!isValid)
+                        continue;
+
+                    // PLACE WALL
+                    if (prevIsVert)
+                    {
+                        verticalWalls[prevRow, prevCol] = true;
+                        verticalWalls[prevRow + 1, prevCol] = true;
+                    }
+                    else
+                    {
+                        horizontalWalls[prevRow, prevCol] = true;
+                        horizontalWalls[prevRow, prevCol + 1] = true;
+                    }
+
+                    break;
+                }
             }
         }
 
         private bool AskWall(ref int prevRow, ref int prevCol, ref bool prevIsVert)
         {
-            Console.WriteLine("Wall controls: move - arrow keys, rotate - r, place - enter.");
-            bool valid = false;
+            ConsoleKeyInfo key = Console.ReadKey(true);
 
-            while (!valid)
+            switch (key.Key)
             {
-                ConsoleKeyInfo key = Console.ReadKey(true);
+                case ConsoleKey.UpArrow:
+                    prevRow--;
+                    break;
 
-                switch (key.Key)
-                {
-                    case ConsoleKey.UpArrow:
-                        prevRow -= 1;
-                        break;
+                case ConsoleKey.DownArrow:
+                    prevRow++;
+                    break;
 
-                    case ConsoleKey.DownArrow:
-                        prevRow += 1;
-                        break;
+                case ConsoleKey.LeftArrow:
+                    prevCol--;
+                    break;
 
-                    case ConsoleKey.LeftArrow:
-                        prevCol -= 1;
-                        break;
+                case ConsoleKey.RightArrow:
+                    prevCol++;
+                    break;
 
-                    case ConsoleKey.RightArrow:
-                        prevCol += 1;
-                        break;
+                case ConsoleKey.R:
+                    prevIsVert = !prevIsVert;
+                    break;
 
-                    case ConsoleKey.R:
-                        prevIsVert = !prevIsVert;
-                        break;
+                case ConsoleKey.Enter:
+                    return true; //Attempt placement
 
-                    case ConsoleKey.Enter:
-                        return true;
-
-                    default: break;
-                }
-
-                if (ValidateWall(prevRow, prevCol, prevIsVert))
-                {
-                    valid = true;
-                }
-                else
-                {
-                    Console.WriteLine("Invalid placement.");
-                }
+                default:
+                    break;
             }
 
             return false;
+        }
+
+        private void ClampPreview(ref int prevRow, ref int prevCol, bool isVert)
+        {
+            if (isVert)
+            {
+                //Row: 0 → length - 2 (because wall is 2 long)
+                if (prevRow < 0)
+                    prevRow = 0;
+                if (prevRow > verticalWalls.GetLength(0) - 2)
+                    prevRow = verticalWalls.GetLength(0) - 2;
+
+                //Col: 1 → length (based on indexing with col - 1)
+                if (prevCol < 1)
+                    prevCol = 1;
+                if (prevCol > verticalWalls.GetLength(1))
+                    prevCol = verticalWalls.GetLength(1);
+            }
+            else
+            {
+                //Row: 1 → length (based on indexing with row - 1)
+                if (prevRow < 1)
+                    prevRow = 1;
+                if (prevRow > horizontalWalls.GetLength(0))
+                    prevRow = horizontalWalls.GetLength(0);
+
+                //Col: 0 → length - 2 (because wall is 2 long)
+                if (prevCol < 0)
+                    prevCol = 0;
+                if (prevCol > horizontalWalls.GetLength(1) - 2)
+                    prevCol = horizontalWalls.GetLength(1) - 2;
+            }
         }
 
         private bool ValidateWall(int prevRow, int prevCol, bool prevIsVert)
         {
             if (prevIsVert)
             {
-                int maxRow = horizontalWalls.GetLength(0);
-                int maxCol = horizontalWalls.GetLength(1);
+                int maxRow = verticalWalls.GetLength(0);
+                int maxCol = verticalWalls.GetLength(1);
 
-                if (prevRow < 0 || prevRow >= maxRow)
+                //Basic bounds:
+                if (prevRow < 0 || prevRow >= maxRow - 1 || prevCol < 1 || prevCol > maxCol)
                 {
                     return false;
                 }
-                else if (prevCol < 1 || prevCol >= maxCol)
+                //Overlap:
+                else if (verticalWalls[prevRow, prevCol] || verticalWalls[prevRow + 1, prevCol])
                 {
                     return false;
                 }
             }
             else
             {
-                int maxRow = verticalWalls.GetLength(0);
-                int maxCol = verticalWalls.GetLength(1);
+                int maxRow = horizontalWalls.GetLength(0);
+                int maxCol = horizontalWalls.GetLength(1);
 
-                if (prevRow < 1 || prevRow >= maxRow)
+                //Basic bounds validation:
+                if (prevRow < 1 || prevRow > maxRow || prevCol < 0 || prevCol >= maxCol - 1)
                 {
                     return false;
                 }
-                else if (prevCol < 0 || prevCol >= maxCol)
+                else if (horizontalWalls[prevRow, prevCol] || horizontalWalls[prevRow, prevCol + 1])
                 {
                     return false;
                 }
             }
-
-            //else
-            //{
-            //    // --- Bounds (needs 2 horizontal segments) ---
-            //    if (prevRow < 0 || prevRow >= horizontalWalls.GetLength(0))
-            //        return false;
-
-            //    if (prevCol < 0 || prevCol >= horizontalWalls.GetLength(1) )
-            //        return false;
-
-            //    // --- Overlap check ---
-            //    if (horizontalWalls[prevRow, prevCol] ||
-            //        horizontalWalls[prevRow, prevCol + 1])
-            //        return false;
-
-            //    // --- Optional: prevent crossing vertical wall ---
-            //    if (prevRow < verticalWalls.GetLength(0) &&
-            //        prevCol < verticalWalls.GetLength(1) &&
-            //        verticalWalls[prevRow, prevCol] &&
-            //        verticalWalls[prevRow + 1, prevCol])
-            //        return false;
-            //}
 
             return true;
         }
