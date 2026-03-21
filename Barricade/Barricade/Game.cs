@@ -1,5 +1,6 @@
 ﻿using AStarAlgorithm;
 using System;
+using System.ComponentModel;
 using System.Data;
 
 namespace Barricade
@@ -90,6 +91,10 @@ namespace Barricade
                         movement[1] = 1;
                         break;
 
+                    case ConsoleKey.Spacebar:
+                        WallMode(current);
+                        break;
+
                     default: continue;
                 }
 
@@ -133,12 +138,73 @@ namespace Barricade
             return true;
         }
 
-        private bool CheckWin(Player currentPlayer)
+        private bool CheckWin(Player current)
         {
-            if (currentPlayer.Position.Row == currentPlayer.TargetRow)
+            if (current.Position.Row == current.TargetRow)
                 return true;
             else
                 return false;
+        }
+
+        private void WallMode(Player current)
+        {
+            int prevRow = 4;
+            int prevCol = 4;
+            bool prevIsVert = false;
+
+            do
+            {
+                Console.Clear();
+
+                board.DisplayBoard(player1, player2, horizontalWalls, verticalWalls, true, prevRow, prevCol, prevIsVert);
+            } while (!AskWall(ref prevRow, ref prevCol, ref prevIsVert));
+        }
+
+        private bool AskWall(ref int prevRow, ref int prevCol, ref bool prevIsVert)
+        {
+            Console.WriteLine("Wall controls: move - arrow keys, rotate - r, place - enter.");
+
+            ConsoleKeyInfo key = Console.ReadKey(true);
+
+            switch (key.Key)
+            {
+                case ConsoleKey.UpArrow:
+                    prevRow -= 1;
+                    break;
+
+                case ConsoleKey.DownArrow:
+                    prevRow += 1;
+                    break;
+
+                case ConsoleKey.LeftArrow:
+                    prevCol -= 1;
+                    break;
+
+                case ConsoleKey.RightArrow:
+                    prevCol += 1;
+                    break;
+
+                case ConsoleKey.R:
+                    prevIsVert = !prevIsVert;
+                    break;
+
+                case ConsoleKey.Enter:
+                    return true;
+
+                default: break;
+            }
+
+            //VALIDATE LATER
+            //if (ValidateMove())
+            //{
+            //    valid = true;
+            //}
+            //else
+            //{
+            //    Console.WriteLine("Invalid placement.");
+            //}
+
+            return false;
         }
     }
 }

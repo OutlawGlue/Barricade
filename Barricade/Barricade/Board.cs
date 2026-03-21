@@ -12,7 +12,8 @@ namespace Barricade
             this.grid = grid;
         }
 
-        public void DisplayBoard(Player player1, Player player2, bool[,] horizontal, bool[,] vertical)
+        public void DisplayBoard(Player player1, Player player2, bool[,] horizontal, bool[,] vertical,
+            bool wallMode = false, int prevRow = -1, int prevCol = -1, bool prevIsVert = false)
         {
             ConsoleColor defaultColour = Console.ForegroundColor;
             ConsoleColor grey = ConsoleColor.DarkGray;
@@ -24,6 +25,26 @@ namespace Barricade
             {
                 for (int c = 0; c < boardCols; c++)
                 {
+                    bool isPreview = false;
+
+                    if (wallMode)
+                    {
+                        if (prevIsVert)
+                        {
+                            // vertical wall = 2 stacked segments
+                            isPreview =
+                                (r == prevRow * 2 + 1 && c == prevCol * 2) ||
+                                (r == prevRow * 2 + 3 && c == prevCol * 2);
+                        }
+                        else
+                        {
+                            // horizontal wall = 2 side-by-side segments
+                            isPreview =
+                                (r == prevRow * 2 && c == prevCol * 2 + 1) ||
+                                (r == prevRow * 2 && c == prevCol * 2 + 3);
+                        }
+                    }
+
                     //Nodes:
                     if (r % 2 == 1 && c % 2 == 1)
                     {
@@ -57,16 +78,15 @@ namespace Barricade
                     //Horizontal walls:
                     else if (r % 2 == 0)
                     {
-                        if (r > 0 && r < boardRows - 1)
+                        if (isPreview)
                         {
-                            if (horizontal[(r - 2) / 2, (c - 1) / 2])
-                            {
-                                Console.Write('|');
-                            }
-                            else
-                            {
-                                Console.Write(' ');
-                            }
+                            Console.ForegroundColor = defaultColour;
+                            Console.Write('-');
+                            Console.ForegroundColor = grey;
+                        }
+                        else if (r > 0 && r < boardRows - 1 && horizontal[(r - 2) / 2, (c - 1) / 2])
+                        {
+                            Console.Write('-');
                         }
                         else
                         {
@@ -76,16 +96,15 @@ namespace Barricade
                     //Vertical walls:
                     else if (c % 2 == 0)
                     {
-                        if (c > 0 && c < boardCols - 1)
+                        if (isPreview)
                         {
-                            if (vertical[(r - 1) / 2, (c - 2) / 2])
-                            {
-                                Console.Write('|');
-                            }
-                            else
-                            {
-                                Console.Write(' ');
-                            }
+                            Console.ForegroundColor = defaultColour;
+                            Console.Write('|');
+                            Console.ForegroundColor = grey;
+                        }
+                        else if (c > 0 && c < boardCols - 1 && vertical[(r - 1) / 2, (c - 2) / 2])
+                        {
+                            Console.Write('|');
                         }
                         else
                         {
