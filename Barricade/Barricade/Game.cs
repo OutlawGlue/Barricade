@@ -1,18 +1,16 @@
 ﻿using AStarAlgorithm;
 using System;
-using System.ComponentModel;
-using System.Data;
 
 namespace Barricade
 {
     internal class Game
     {
-        private Grid grid;
-        private Board board;
-        private bool[,] horizontalWalls;
-        private bool[,] verticalWalls;
-        private Player player1;
-        private Player player2;
+        private readonly Grid grid;
+        private readonly Board board;
+        private readonly bool[,] horizontalWalls;
+        private readonly bool[,] verticalWalls;
+        private readonly Player player1;
+        private readonly Player player2;
         private bool gameWon = false;
 
         public Game(Grid grid, Board board, Player player1, Player player2)
@@ -67,11 +65,6 @@ namespace Barricade
                 Console.WriteLine($"{current.Name} please make your move.");
                 ConsoleKeyInfo key = Console.ReadKey(true);
 
-                if (key.Key == ConsoleKey.Spacebar)
-                {
-                    //Wall mode:
-                }
-
                 movement[0] = 0; movement[1] = 0;
                 switch (key.Key)
                 {
@@ -99,13 +92,9 @@ namespace Barricade
                 }
 
                 if (ValidateMove(current, ref movement, opponent))
-                {
                     valid = true;
-                }
                 else
-                {
                     Console.WriteLine("Invalid move.");
-                }
             }
 
             return movement;
@@ -163,17 +152,17 @@ namespace Barricade
                     true, prevRow, prevCol, prevIsVert,
                     isValid);
 
-                bool placing = AskWall(ref prevRow, ref prevCol, ref prevIsVert);
+                bool wallMode = AskWall(ref prevRow, ref prevCol, ref prevIsVert);
 
                 //Clamp value after preview moved:
                 ClampPreview(ref prevRow, ref prevCol, prevIsVert);
 
-                if (placing)
+                if (wallMode)
                 {
                     if (!isValid)
                         continue;
 
-                    // PLACE WALL
+                    //Wall placement:
                     if (prevIsVert)
                     {
                         verticalWalls[prevRow, prevCol] = true;
@@ -283,13 +272,10 @@ namespace Barricade
 
                 //Basic bounds validation:
                 if (prevRow < 1 || prevRow > maxRow || prevCol < 0 || prevCol >= maxCol - 1)
-                {
                     return false;
-                }
+                //Overlap:
                 else if (horizontalWalls[prevRow, prevCol] || horizontalWalls[prevRow, prevCol + 1])
-                {
                     return false;
-                }
             }
 
             return true;

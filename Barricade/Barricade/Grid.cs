@@ -18,7 +18,6 @@ namespace AStarAlgorithm
 
         private void SetUpGrid()
         {
-            //Don't need to worry about rows -1 here
             for (int row = 0; row < rows; row++)
             {
                 for (int col = 0; col < cols; col++)

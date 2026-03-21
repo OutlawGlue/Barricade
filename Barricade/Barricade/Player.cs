@@ -7,9 +7,9 @@ namespace Barricade
     {
         private string name;
         private char symbol;
-        private ConsoleColor colour; //change to color later
-        private Node position;
-        private int targetRow;
+        private readonly ConsoleColor colour;
+        private readonly Node position;
+        private readonly int targetRow;
 
         public Player(Node startPosition, int targetRow, string name, char symbol, ConsoleColor colour)
         {

@@ -30,24 +30,21 @@ namespace Barricade
                     bool isPreview = false;
 
                     if (wallMode)
-                    {
                         if (prevIsVert)
                         {
-                            // vertical wall = 2 stacked segments
+                            //Vertical wall = 2 stacked walls:
                             isPreview =
                                 (r == prevRow * 2 + 1 && c == prevCol * 2) ||
                                 (r == prevRow * 2 + 3 && c == prevCol * 2);
                         }
                         else
                         {
-                            // horizontal wall = 2 side-by-side segments
+                            //Horizontal wall = 2 side-by-side walls:
                             isPreview =
                                 (r == prevRow * 2 && c == prevCol * 2 + 1) ||
                                 (r == prevRow * 2 && c == prevCol * 2 + 3);
                         }
-                    }
-
-                    // Nodes
+                    //Nodes:
                     if (r % 2 == 1 && c % 2 == 1)
                     {
                         int gridRow = r / 2;
@@ -72,14 +69,11 @@ namespace Barricade
                             Console.Write(' ');
                         }
                     }
-                    // Corners
+                    //Corners:
                     else if (r % 2 == 0 && c % 2 == 0)
-                    {
                         Console.Write('+');
-                    }
-                    // Horizontal walls
+                    //Horizontal walls:
                     else if (r % 2 == 0 && c % 2 == 1)
-                    {
                         if (isPreview)
                         {
                             Console.ForegroundColor = isValidPreview ? ConsoleColor.Yellow : ConsoleColor.Red;
@@ -95,10 +89,8 @@ namespace Barricade
                         {
                             Console.Write(' ');
                         }
-                    }
-                    // Vertical walls
+                    //Vertical walls:
                     else if (c % 2 == 0 && r % 2 == 1)
-                    {
                         if (isPreview)
                         {
                             Console.ForegroundColor = isValidPreview ? ConsoleColor.Yellow : ConsoleColor.Red;
@@ -114,12 +106,11 @@ namespace Barricade
                         {
                             Console.Write(' ');
                         }
-                    }
+                    Console.WriteLine();
                 }
-                Console.WriteLine();
-            }
 
-            Console.ForegroundColor = defaultColour;
+                Console.ForegroundColor = defaultColour;
+            }
         }
     }
 }

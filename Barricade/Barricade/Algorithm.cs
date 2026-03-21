@@ -69,7 +69,7 @@ namespace AStarAlgorithm
                     }
                 }
             }
-            return null; //if issue with path, return null
+            return null; //If issue with path, return null
         }
 
         private int CalcHeuristic(Node start, Node end)
