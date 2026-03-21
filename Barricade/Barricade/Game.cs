@@ -135,17 +135,47 @@ namespace Barricade
                     return false;
             }
 
-            //Check if into opponent:
+            //Check if moving into opponent:
             if (newRow == opponent.Position.Row && newCol == opponent.Position.Col)
             {
-                int jumpRow = current.Position.Row + move[0] * 2;
-                int jumpCol = current.Position.Col + move[1] * 2;
+                int row = current.Position.Row;
+                int col = current.Position.Col;
+
+                int jumpRow = row + move[0] * 2;
+                int jumpCol = col + move[1] * 2;
 
                 //Check jump within bounds:
                 if (jumpRow < 0 || jumpRow >= grid.Rows || jumpCol < 0 || jumpCol >= grid.Cols)
                     return false;
 
-                //Apply jump:
+                //Check wall beside opponent (to fix wall jumping bug):
+
+                //Moving up:
+                if (move[0] == -1)
+                {
+                    if (horizontalWalls[row - 2, col])
+                        return false;
+                }
+                //Moving down:
+                else if (move[0] == 1)
+                {
+                    if (horizontalWalls[row + 1, col])
+                        return false;
+                }
+                //Moving left:
+                else if (move[1] == -1)
+                {
+                    if (verticalWalls[row, col - 2])
+                        return false;
+                }
+                //Moving right:
+                else if (move[1] == 1)
+                {
+                    if (verticalWalls[row, col + 1])
+                        return false;
+                }
+
+                //Apply jump
                 move[0] *= 2;
                 move[1] *= 2;
             }
