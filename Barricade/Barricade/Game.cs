@@ -100,28 +100,54 @@ namespace Barricade
             return movement;
         }
 
-        private bool ValidateMove(Player current, ref int[] movement, Player opponent)
+        private bool ValidateMove(Player current, ref int[] move, Player opponent)
         {
-            int newRow = current.Position.Row + movement[0];
-            int newCol = current.Position.Col + movement[1];
+            int newRow = current.Position.Row + move[0];
+            int newCol = current.Position.Col + move[1];
 
             //Check bounds:
             if (newRow < 0 || newRow >= grid.Rows || newCol < 0 || newCol >= grid.Cols)
                 return false;
 
+            //Check for walls:
+
+            //Vertical movement:
+            if (move[0] == -1) //UP
+            {
+                if (newRow >= 0 && horizontalWalls[newRow, newCol])
+                    return false;
+            }
+            else if (move[0] == 1) //DOWN
+            {
+                if (newRow - 1 >= 0 && horizontalWalls[newRow - 1, newCol])
+                    return false;
+            }
+
+            //Horizontal movement:
+            else if (move[1] == -1) //LEFT
+            {
+                if (newCol >= 0 && verticalWalls[newRow, newCol])
+                    return false;
+            }
+            else if (move[1] == 1) //RIGHT
+            {
+                if (newCol - 1 >= 0 && verticalWalls[newRow, newCol - 1])
+                    return false;
+            }
+
             //Check if into opponent:
             if (newRow == opponent.Position.Row && newCol == opponent.Position.Col)
             {
-                int jumpRow = current.Position.Row + movement[0] * 2;
-                int jumpCol = current.Position.Col + movement[1] * 2;
+                int jumpRow = current.Position.Row + move[0] * 2;
+                int jumpCol = current.Position.Col + move[1] * 2;
 
                 //Check jump within bounds:
                 if (jumpRow < 0 || jumpRow >= grid.Rows || jumpCol < 0 || jumpCol >= grid.Cols)
                     return false;
 
                 //Apply jump:
-                movement[0] *= 2;
-                movement[1] *= 2;
+                move[0] *= 2;
+                move[1] *= 2;
             }
 
             return true;
