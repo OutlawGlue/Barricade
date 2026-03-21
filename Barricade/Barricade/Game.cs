@@ -219,27 +219,25 @@ namespace Barricade
         {
             if (isVert)
             {
-                //Row: 0 → length - 2 (because wall is 2 long)
+                //verticalWalls: [rows, cols - 1]
                 if (prevRow < 0)
                     prevRow = 0;
                 if (prevRow > verticalWalls.GetLength(0) - 2)
                     prevRow = verticalWalls.GetLength(0) - 2;
 
-                //Col: 1 → length (based on indexing with col - 1)
-                if (prevCol < 1)
-                    prevCol = 1;
-                if (prevCol > verticalWalls.GetLength(1))
-                    prevCol = verticalWalls.GetLength(1);
+                if (prevCol < 0)
+                    prevCol = 0;
+                if (prevCol > verticalWalls.GetLength(1) - 1)
+                    prevCol = verticalWalls.GetLength(1) - 1;
             }
             else
             {
-                //Row: 1 → length (based on indexing with row - 1)
-                if (prevRow < 1)
-                    prevRow = 1;
-                if (prevRow > horizontalWalls.GetLength(0))
-                    prevRow = horizontalWalls.GetLength(0);
+                //horizontalWalls: [rows - 1, cols]
+                if (prevRow < 0)
+                    prevRow = 0;
+                if (prevRow > horizontalWalls.GetLength(0) - 1)
+                    prevRow = horizontalWalls.GetLength(0) - 1;
 
-                //Col: 0 → length - 2 (because wall is 2 long)
                 if (prevCol < 0)
                     prevCol = 0;
                 if (prevCol > horizontalWalls.GetLength(1) - 2)
@@ -254,30 +252,23 @@ namespace Barricade
                 int maxRow = verticalWalls.GetLength(0);
                 int maxCol = verticalWalls.GetLength(1);
 
-                //Basic bounds:
-                if (prevRow < 0 || prevRow >= maxRow - 1 || prevCol < 1 || prevCol > maxCol)
-                {
+                if (prevRow < 0 || prevRow >= maxRow - 1 || prevCol < 0 || prevCol >= maxCol)
                     return false;
-                }
-                //Overlap:
-                else if (verticalWalls[prevRow, prevCol] || verticalWalls[prevRow + 1, prevCol])
-                {
+
+                if (verticalWalls[prevRow, prevCol] || verticalWalls[prevRow + 1, prevCol])
                     return false;
-                }
             }
             else
             {
                 int maxRow = horizontalWalls.GetLength(0);
                 int maxCol = horizontalWalls.GetLength(1);
 
-                //Basic bounds validation:
-                if (prevRow < 1 || prevRow > maxRow || prevCol < 0 || prevCol >= maxCol - 1)
+                if (prevRow < 0 || prevRow >= maxRow || prevCol < 0 || prevCol >= maxCol - 1)
                     return false;
-                //Overlap:
-                else if (horizontalWalls[prevRow, prevCol] || horizontalWalls[prevRow, prevCol + 1])
+
+                if (horizontalWalls[prevRow, prevCol] || horizontalWalls[prevRow, prevCol + 1])
                     return false;
             }
-
             return true;
         }
     }
