@@ -92,7 +92,7 @@ namespace Barricade
                         break;
 
                     case ConsoleKey.Spacebar:
-                        WallMode(current);
+                        WallMode();
                         break;
 
                     default: continue;
@@ -146,7 +146,7 @@ namespace Barricade
                 return false;
         }
 
-        private void WallMode(Player current)
+        private void WallMode()
         {
             int prevRow = 4;
             int prevCol = 4;
@@ -173,48 +173,107 @@ namespace Barricade
         private bool AskWall(ref int prevRow, ref int prevCol, ref bool prevIsVert)
         {
             Console.WriteLine("Wall controls: move - arrow keys, rotate - r, place - enter.");
+            bool valid = false;
 
-            ConsoleKeyInfo key = Console.ReadKey(true);
-
-            switch (key.Key)
+            while (!valid)
             {
-                case ConsoleKey.UpArrow:
-                    prevRow -= 1;
-                    break;
+                ConsoleKeyInfo key = Console.ReadKey(true);
 
-                case ConsoleKey.DownArrow:
-                    prevRow += 1;
-                    break;
+                switch (key.Key)
+                {
+                    case ConsoleKey.UpArrow:
+                        prevRow -= 1;
+                        break;
 
-                case ConsoleKey.LeftArrow:
-                    prevCol -= 1;
-                    break;
+                    case ConsoleKey.DownArrow:
+                        prevRow += 1;
+                        break;
 
-                case ConsoleKey.RightArrow:
-                    prevCol += 1;
-                    break;
+                    case ConsoleKey.LeftArrow:
+                        prevCol -= 1;
+                        break;
 
-                case ConsoleKey.R:
-                    prevIsVert = !prevIsVert;
-                    break;
+                    case ConsoleKey.RightArrow:
+                        prevCol += 1;
+                        break;
 
-                case ConsoleKey.Enter:
-                    return true;
+                    case ConsoleKey.R:
+                        prevIsVert = !prevIsVert;
+                        break;
 
-                default: break;
+                    case ConsoleKey.Enter:
+                        return true;
+
+                    default: break;
+                }
+
+                if (ValidateWall(prevRow, prevCol, prevIsVert))
+                {
+                    valid = true;
+                }
+                else
+                {
+                    Console.WriteLine("Invalid placement.");
+                }
             }
 
-            //VALIDATE LATER
-            //if (ValidateMove())
-            //{
-            //    valid = true;
-            //}
+            return false;
+        }
+
+        private bool ValidateWall(int prevRow, int prevCol, bool prevIsVert)
+        {
+            if (prevIsVert)
+            {
+                int maxRow = horizontalWalls.GetLength(0);
+                int maxCol = horizontalWalls.GetLength(1);
+
+                if (prevRow < 0 || prevRow >= maxRow)
+                {
+                    return false;
+                }
+                else if (prevCol < 1 || prevCol >= maxCol)
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                int maxRow = verticalWalls.GetLength(0);
+                int maxCol = verticalWalls.GetLength(1);
+
+                if (prevRow < 1 || prevRow >= maxRow)
+                {
+                    return false;
+                }
+                else if (prevCol < 0 || prevCol >= maxCol)
+                {
+                    return false;
+                }
+            }
+
             //else
             //{
-            //    Console.WriteLine("Invalid placement.");
+            //    // --- Bounds (needs 2 horizontal segments) ---
+            //    if (prevRow < 0 || prevRow >= horizontalWalls.GetLength(0))
+            //        return false;
+
+            //    if (prevCol < 0 || prevCol >= horizontalWalls.GetLength(1) )
+            //        return false;
+
+            //    // --- Overlap check ---
+            //    if (horizontalWalls[prevRow, prevCol] ||
+            //        horizontalWalls[prevRow, prevCol + 1])
+            //        return false;
+
+            //    // --- Optional: prevent crossing vertical wall ---
+            //    if (prevRow < verticalWalls.GetLength(0) &&
+            //        prevCol < verticalWalls.GetLength(1) &&
+            //        verticalWalls[prevRow, prevCol] &&
+            //        verticalWalls[prevRow + 1, prevCol])
+            //        return false;
             //}
 
-            return false;
+            return true;
         }
     }
 }
