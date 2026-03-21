@@ -155,9 +155,19 @@ namespace Barricade
             do
             {
                 Console.Clear();
-
                 board.DisplayBoard(player1, player2, horizontalWalls, verticalWalls, true, prevRow, prevCol, prevIsVert);
             } while (!AskWall(ref prevRow, ref prevCol, ref prevIsVert));
+
+            if (prevIsVert)
+            {
+                verticalWalls[prevRow, prevCol - 1] = true;
+                verticalWalls[prevRow + 1, prevCol - 1] = true;
+            }
+            else
+            {
+                horizontalWalls[prevRow - 1, prevCol] = true;
+                horizontalWalls[prevRow - 1, prevCol + 1] = true;
+            }
         }
 
         private bool AskWall(ref int prevRow, ref int prevCol, ref bool prevIsVert)
