@@ -1,5 +1,6 @@
 ﻿using AStarAlgorithm;
 using System;
+using System.Data;
 
 namespace Barricade
 {
@@ -7,6 +8,8 @@ namespace Barricade
     {
         private Grid grid;
         private Board board;
+        private bool[,] horizontalWalls;
+        private bool[,] verticalWalls;
         private Player player1;
         private Player player2;
         private bool gameWon = false;
@@ -17,6 +20,11 @@ namespace Barricade
             this.board = board;
             this.player1 = player1;
             this.player2 = player2;
+
+            int rows = grid.Rows;
+            int cols = grid.Cols;
+            horizontalWalls = new bool[rows - 1, cols];
+            verticalWalls = new bool[rows, cols - 1];
 
             RunGame();
         }
@@ -30,13 +38,13 @@ namespace Barricade
 
             while (!gameWon)
             {
-                board.DisplayBoard(player1, player2);
+                board.DisplayBoard(player1, player2, horizontalWalls, verticalWalls);
 
                 currentPlayer.Move(AskMove(currentPlayer, opponentPlayer));
                 Console.Clear();
                 if (CheckWin(currentPlayer))
                 {
-                    board.DisplayBoard(player1, player2);
+                    board.DisplayBoard(player1, player2, horizontalWalls, verticalWalls);
                     gameWon = true;
                     Console.WriteLine($"{currentPlayer.Name} wins!");
                 }
@@ -55,12 +63,16 @@ namespace Barricade
 
             while (!valid)
             {
-                movement[0] = 0; movement[1] = 0;
                 Console.WriteLine($"{current.Name} please make your move.");
+                ConsoleKeyInfo key = Console.ReadKey(true);
 
-                ConsoleKeyInfo keyInfo = Console.ReadKey(true); // true = don't echo
+                if (key.Key == ConsoleKey.Spacebar)
+                {
+                    //Wall mode:
+                }
 
-                switch (keyInfo.Key)
+                movement[0] = 0; movement[1] = 0;
+                switch (key.Key)
                 {
                     case ConsoleKey.UpArrow:
                         movement[0] = -1;
@@ -77,6 +89,8 @@ namespace Barricade
                     case ConsoleKey.RightArrow:
                         movement[1] = 1;
                         break;
+
+                    default: continue;
                 }
 
                 if (ValidateMove(current, ref movement, opponent))

@@ -12,15 +12,17 @@ namespace Barricade
             this.grid = grid;
         }
 
-        public void DisplayBoard(Player player1, Player player2)
+        public void DisplayBoard(Player player1, Player player2, bool[,] horizontal, bool[,] vertical)
         {
             ConsoleColor defaultColour = Console.ForegroundColor;
             ConsoleColor grey = ConsoleColor.DarkGray;
             Console.ForegroundColor = grey;
+            int boardRows = grid.Rows * 2 + 1;
+            int boardCols = grid.Cols * 2 + 1;
 
-            for (int r = 0; r < grid.Rows * 2 + 1; r++)
+            for (int r = 0; r < boardRows; r++)
             {
-                for (int c = 0; c < grid.Cols * 2 + 1; c++)
+                for (int c = 0; c < boardCols; c++)
                 {
                     //Nodes:
                     if (r % 2 == 1 && c % 2 == 1)
@@ -55,12 +57,40 @@ namespace Barricade
                     //Horizontal walls:
                     else if (r % 2 == 0)
                     {
-                        Console.Write(' ');
+                        if (r > 0 && r < boardRows - 1)
+                        {
+                            if (horizontal[(r - 2) / 2, (c - 1) / 2])
+                            {
+                                Console.Write('|');
+                            }
+                            else
+                            {
+                                Console.Write(' ');
+                            }
+                        }
+                        else
+                        {
+                            Console.Write(' ');
+                        }
                     }
                     //Vertical walls:
                     else if (c % 2 == 0)
                     {
-                        Console.Write(' ');
+                        if (c > 0 && c < boardCols - 1)
+                        {
+                            if (vertical[(r - 1) / 2, (c - 2) / 2])
+                            {
+                                Console.Write('|');
+                            }
+                            else
+                            {
+                                Console.Write(' ');
+                            }
+                        }
+                        else
+                        {
+                            Console.Write(' ');
+                        }
                     }
                 }
                 Console.WriteLine();
