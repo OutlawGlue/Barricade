@@ -17,11 +17,9 @@ namespace Barricade
             Grid grid = new Grid(gridSize[0], gridSize[1]);
             Board board = new Board(grid);
 
-            Node p1start = new Node(8, 4);
-            Player player1 = new Player(p1start, 0, p1Name, '*', ConsoleColor.Red);
-
-            Node p2start = new Node(0, 4);
-            Player player2 = new Player(p2start, 8, p2Name, '#', ConsoleColor.Blue);
+            //Players use row/col directly:
+            Player player1 = new Player(8, 4, 0, p1Name, '*', ConsoleColor.Red);
+            Player player2 = new Player(0, 4, 8, p2Name, '#', ConsoleColor.Blue);
 
             new Game(grid, board, player1, player2);
 

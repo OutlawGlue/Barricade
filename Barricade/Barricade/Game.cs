@@ -42,15 +42,24 @@ namespace Barricade
             {
                 board.DisplayBoard(player1, player2, horizontalWalls, verticalWalls);
 
-                currentPlayer.Move(AskMove(currentPlayer, opponentPlayer));
+                int[] move = AskMove(currentPlayer, opponentPlayer);
+
                 Console.Clear();
-                if (CheckWin(currentPlayer))
+
+                //Null move means the player placed a wall - turn ends without moving:
+                if (move != null)
                 {
-                    board.DisplayBoard(player1, player2, horizontalWalls, verticalWalls);
-                    gameWon = true;
-                    Console.WriteLine($"{currentPlayer.Name} wins!");
+                    currentPlayer.Move(move);
+
+                    if (CheckWin(currentPlayer))
+                    {
+                        board.DisplayBoard(player1, player2, horizontalWalls, verticalWalls);
+                        gameWon = true;
+                        Console.WriteLine($"{currentPlayer.Name} wins!");
+                    }
                 }
-                else
+
+                if (!gameWon)
                 {
                     opponentPlayer = currentPlayer;
                     currentPlayer = currentPlayer == player1 ? player2 : player1;
@@ -58,12 +67,12 @@ namespace Barricade
             }
         }
 
+        //Returns null if the turn was spent placing a wall:
         private int[] AskMove(Player current, Player opponent)
         {
-            bool valid = false;
             int[] movement = new int[2];
 
-            while (!valid)
+            while (true)
             {
                 Console.WriteLine($"{current.Name} please make your move.");
                 ConsoleKeyInfo key = Console.ReadKey(true);
@@ -89,24 +98,22 @@ namespace Barricade
 
                     case ConsoleKey.Spacebar:
                         WallMode();
-                        break;
+                        return null; //Wall placed - end turn immediately
 
                     default: continue;
                 }
 
                 if (ValidateMove(current, ref movement, opponent))
-                    valid = true;
+                    return movement;
                 else
                     Console.WriteLine("Invalid move.");
             }
-
-            return movement;
         }
 
         private bool ValidateMove(Player current, ref int[] move, Player opponent)
         {
-            int newRow = current.Position.Row + move[0];
-            int newCol = current.Position.Col + move[1];
+            int newRow = current.Row + move[0];
+            int newCol = current.Col + move[1];
 
             //Check bounds:
             if (newRow < 0 || newRow >= grid.Rows || newCol < 0 || newCol >= grid.Cols)
@@ -139,10 +146,10 @@ namespace Barricade
             }
 
             //Check if moving into opponent:
-            if (newRow == opponent.Position.Row && newCol == opponent.Position.Col)
+            if (newRow == opponent.Row && newCol == opponent.Col)
             {
-                int row = current.Position.Row;
-                int col = current.Position.Col;
+                int row = current.Row;
+                int col = current.Col;
 
                 int jumpRow = row + move[0] * 2;
                 int jumpCol = col + move[1] * 2;
@@ -151,25 +158,25 @@ namespace Barricade
                 if (jumpRow < 0 || jumpRow >= grid.Rows || jumpCol < 0 || jumpCol >= grid.Cols)
                     return false;
 
-                //Moving up: check wall above opponent
+                //Moving up: check wall above opponent:
                 if (move[0] == -1)
                 {
                     if (newRow - 1 >= 0 && horizontalWalls[newRow - 1, newCol])
                         return false;
                 }
-                //Moving down: check wall below opponent
+                //Moving down: check wall below opponent:
                 else if (move[0] == 1)
                 {
                     if (newRow < horizontalWalls.GetLength(0) && horizontalWalls[newRow, newCol])
                         return false;
                 }
-                //Moving left: check wall left of opponent
+                //Moving left: check wall left of opponent:
                 else if (move[1] == -1)
                 {
                     if (newCol - 1 >= 0 && verticalWalls[newRow, newCol - 1])
                         return false;
                 }
-                //Moving right: check wall right of opponent
+                //Moving right: check wall right of opponent:
                 else if (move[1] == 1)
                 {
                     if (newCol < verticalWalls.GetLength(1) && verticalWalls[newRow, newCol])
@@ -186,7 +193,7 @@ namespace Barricade
 
         private bool CheckWin(Player current)
         {
-            if (current.Position.Row == current.TargetRow)
+            if (current.Row == current.TargetRow)
                 return true;
             else
                 return false;
@@ -327,6 +334,7 @@ namespace Barricade
                     return false;
             }
 
+            //Temporarily place wall to test if both players still have a valid path:
             if (prevIsVert)
             {
                 verticalWalls[prevRow, prevCol] = true;
@@ -362,18 +370,10 @@ namespace Barricade
 
         private bool PlayerHasPath(Player player)
         {
-            Node start = grid.GetNode(player.Position.Row, player.Position.Col);
+            Node start = grid.GetNode(player.Row, player.Col);
 
-            //Try every column in the target row - if any is reachable, path exists:
-            for (int col = 0; col < grid.Cols; col++)
-            {
-                Node target = grid.GetNode(player.TargetRow, col);
-                Path path = algorithm.FindPath(start, target, horizontalWalls, verticalWalls);
-                if (path != null)
-                    return true;
-            }
-
-            return false;
+            //Single search to any cell in the target row:
+            return algorithm.FindPathToRow(start, player.TargetRow, horizontalWalls, verticalWalls);
         }
     }
 }

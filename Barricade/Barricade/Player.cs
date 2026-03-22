@@ -1,5 +1,4 @@
-﻿using AStarAlgorithm;
-using System;
+﻿using System;
 
 namespace Barricade
 {
@@ -8,15 +7,17 @@ namespace Barricade
         private string name;
         private char symbol;
         private readonly ConsoleColor colour;
-        private readonly Node position;
+        private int row;
+        private int col;
         private readonly int targetRow;
 
-        public Player(Node startPosition, int targetRow, string name, char symbol, ConsoleColor colour)
+        public Player(int startRow, int startCol, int targetRow, string name, char symbol, ConsoleColor colour)
         {
             this.name = name;
             this.symbol = symbol;
             this.colour = colour;
-            position = startPosition;
+            this.row = startRow;
+            this.col = startCol;
             this.targetRow = targetRow;
         }
 
@@ -37,9 +38,14 @@ namespace Barricade
             get { return colour; }
         }
 
-        public Node Position
+        public int Row
         {
-            get { return position; }
+            get { return row; }
+        }
+
+        public int Col
+        {
+            get { return col; }
         }
 
         public int TargetRow
@@ -49,8 +55,8 @@ namespace Barricade
 
         public void Move(int[] movement)
         {
-            position.Row += movement[0];
-            position.Col += movement[1];
+            row += movement[0];
+            col += movement[1];
         }
     }
 }

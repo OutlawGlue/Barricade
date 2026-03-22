@@ -46,21 +46,21 @@ namespace Barricade
                                 (r == prevRow * 2 + 2 && c == prevCol * 2 + 3);
                         }
                     }
+
                     //Nodes:
                     if (r % 2 == 1 && c % 2 == 1)
                     {
                         int gridRow = r / 2;
                         int gridCol = c / 2;
 
-                        Node node = grid.GetNode(gridRow, gridCol);
-
-                        if (node.Row == player1.Position.Row && node.Col == player1.Position.Col)
+                        //Compare grid coordinates directly against player position:
+                        if (gridRow == player1.Row && gridCol == player1.Col)
                         {
                             Console.ForegroundColor = player1.Colour;
                             Console.Write(player1.Symbol);
                             Console.ForegroundColor = grey;
                         }
-                        else if (node.Row == player2.Position.Row && node.Col == player2.Position.Col)
+                        else if (gridRow == player2.Row && gridCol == player2.Col)
                         {
                             Console.ForegroundColor = player2.Colour;
                             Console.Write(player2.Symbol);
@@ -100,7 +100,6 @@ namespace Barricade
                             }
                         }
                     }
-
                     //Vertical walls:
                     else if (c % 2 == 0 && r % 2 == 1)
                     {
