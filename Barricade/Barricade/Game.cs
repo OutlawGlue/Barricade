@@ -11,6 +11,7 @@ namespace Barricade
         private readonly bool[,] verticalWalls;
         private readonly Player player1;
         private readonly Player player2;
+        private readonly Algorithm algorithm;
         private bool gameWon = false;
 
         public Game(Grid grid, Board board, Player player1, Player player2)
@@ -24,6 +25,8 @@ namespace Barricade
             int cols = grid.Cols;
             horizontalWalls = new bool[rows - 1, cols];
             verticalWalls = new bool[rows, cols - 1];
+
+            algorithm = new Algorithm(grid);
 
             RunGame();
         }
@@ -148,34 +151,32 @@ namespace Barricade
                 if (jumpRow < 0 || jumpRow >= grid.Rows || jumpCol < 0 || jumpCol >= grid.Cols)
                     return false;
 
-                //Check wall beside opponent (to fix wall jumping bug):
-
-                //Moving up:
+                //Moving up: check wall above opponent
                 if (move[0] == -1)
                 {
-                    if (horizontalWalls[row - 2, col])
+                    if (newRow - 1 >= 0 && horizontalWalls[newRow - 1, newCol])
                         return false;
                 }
-                //Moving down:
+                //Moving down: check wall below opponent
                 else if (move[0] == 1)
                 {
-                    if (horizontalWalls[row + 1, col])
+                    if (newRow < horizontalWalls.GetLength(0) && horizontalWalls[newRow, newCol])
                         return false;
                 }
-                //Moving left:
+                //Moving left: check wall left of opponent
                 else if (move[1] == -1)
                 {
-                    if (verticalWalls[row, col - 2])
+                    if (newCol - 1 >= 0 && verticalWalls[newRow, newCol - 1])
                         return false;
                 }
-                //Moving right:
+                //Moving right: check wall right of opponent
                 else if (move[1] == 1)
                 {
-                    if (verticalWalls[row, col + 1])
+                    if (newCol < verticalWalls.GetLength(1) && verticalWalls[newRow, newCol])
                         return false;
                 }
 
-                //Apply jump
+                //Apply jump:
                 move[0] *= 2;
                 move[1] *= 2;
             }
@@ -325,7 +326,54 @@ namespace Barricade
                 if (horizontalWalls[prevRow, prevCol] || horizontalWalls[prevRow, prevCol + 1])
                     return false;
             }
-            return true;
+
+            if (prevIsVert)
+            {
+                verticalWalls[prevRow, prevCol] = true;
+                verticalWalls[prevRow + 1, prevCol] = true;
+            }
+            else
+            {
+                horizontalWalls[prevRow, prevCol] = true;
+                horizontalWalls[prevRow, prevCol + 1] = true;
+            }
+
+            bool pathExists = PathExistsForBothPlayers();
+
+            //Remove temporary wall:
+            if (prevIsVert)
+            {
+                verticalWalls[prevRow, prevCol] = false;
+                verticalWalls[prevRow + 1, prevCol] = false;
+            }
+            else
+            {
+                horizontalWalls[prevRow, prevCol] = false;
+                horizontalWalls[prevRow, prevCol + 1] = false;
+            }
+
+            return pathExists;
+        }
+
+        private bool PathExistsForBothPlayers()
+        {
+            return PlayerHasPath(player1) && PlayerHasPath(player2);
+        }
+
+        private bool PlayerHasPath(Player player)
+        {
+            Node start = grid.GetNode(player.Position.Row, player.Position.Col);
+
+            //Try every column in the target row - if any is reachable, path exists:
+            for (int col = 0; col < grid.Cols; col++)
+            {
+                Node target = grid.GetNode(player.TargetRow, col);
+                Path path = algorithm.FindPath(start, target, horizontalWalls, verticalWalls);
+                if (path != null)
+                    return true;
+            }
+
+            return false;
         }
     }
 }

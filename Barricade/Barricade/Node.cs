@@ -4,11 +4,10 @@
     {
         private int row;
         private int col;
-        private readonly bool canAccess; //indicates if the node is walkable (not a wall)
+        private bool canAccess; //indicates if the node is walkable (not a wall)
         private Node parent; //reference to the parent node for path reconstruction
 
         private int gCost = int.MaxValue; //current cost from start to this node
-
         private int hCost = 0; //estimated cost from this node to target (heuristic)
         private int fCost => gCost + hCost; //total cost (gCost + hCost)
 
@@ -16,7 +15,7 @@
         {
             this.row = row;
             this.col = col;
-            this.canAccess = true; //works for now, but change this when there are walls
+            this.canAccess = true;
         }
 
         public int Row
@@ -34,6 +33,7 @@
         public bool CanAccess
         {
             get { return canAccess; }
+            set { canAccess = value; }
         }
 
         public Node Parent

@@ -48,34 +48,48 @@ namespace AStarAlgorithm
             int row = current.Row;
             int col = current.Col;
 
-            //Validate:
             if (row < 0 || row >= rows || col < 0 || col >= cols)
-            {
                 return new List<Node>();
-            }
 
             List<Node> neighbours = new List<Node>();
 
-            //Top:
             if (row > 0)
-            {
                 neighbours.Add(grid[row - 1, col]);
-            }
-            //Bottom:
             if (row < rows - 1)
-            {
                 neighbours.Add(grid[row + 1, col]);
-            }
-            //Left:
             if (col > 0)
-            {
                 neighbours.Add(grid[row, col - 1]);
-            }
-            //Right:
             if (col < cols - 1)
-            {
                 neighbours.Add(grid[row, col + 1]);
-            }
+
+            return neighbours;
+        }
+
+        public List<Node> GetNeighboursWithWalls(Node current, bool[,] horizontal, bool[,] vertical)
+        {
+            int row = current.Row;
+            int col = current.Col;
+
+            if (row < 0 || row >= rows || col < 0 || col >= cols)
+                return new List<Node>();
+
+            List<Node> neighbours = new List<Node>();
+
+            //Up: blocked by a horizontal wall at [row-1, col]
+            if (row > 0 && !horizontal[row - 1, col])
+                neighbours.Add(grid[row - 1, col]);
+
+            //Down: blocked by a horizontal wall at [row, col]
+            if (row < rows - 1 && !horizontal[row, col])
+                neighbours.Add(grid[row + 1, col]);
+
+            //Left: blocked by a vertical wall at [row, col-1]
+            if (col > 0 && !vertical[row, col - 1])
+                neighbours.Add(grid[row, col - 1]);
+
+            //Right: blocked by a vertical wall at [row, col]
+            if (col < cols - 1 && !vertical[row, col])
+                neighbours.Add(grid[row, col + 1]);
 
             return neighbours;
         }

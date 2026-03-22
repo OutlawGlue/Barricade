@@ -12,7 +12,7 @@ namespace AStarAlgorithm
             this.grid = grid;
         }
 
-        public Path FindPath(Node start, Node end)
+        public Path FindPath(Node start, Node end, bool[,] horizontal, bool[,] vertical)
         {
             //Reset all nodes:
             foreach (Node node in grid.GetAllNodes())
@@ -25,6 +25,7 @@ namespace AStarAlgorithm
             List<Node> openNodes = new List<Node>();
             List<Node> closedNodes = new List<Node>();
 
+            start.GCost = 0;
             openNodes.Add(start);
 
             while (openNodes.Count > 0)
@@ -47,7 +48,8 @@ namespace AStarAlgorithm
                     return RetracePath(start, end);
                 }
 
-                foreach (Node neighbour in grid.GetNeighbours(current))
+                //Use wall-aware neighbour lookup:
+                foreach (Node neighbour in grid.GetNeighboursWithWalls(current, horizontal, vertical))
                 {
                     if (closedNodes.Contains(neighbour) || !neighbour.CanAccess)
                     {
@@ -69,7 +71,7 @@ namespace AStarAlgorithm
                     }
                 }
             }
-            return null; //If issue with path, return null
+            return null; //No valid path exists
         }
 
         private int CalcHeuristic(Node start, Node end)
