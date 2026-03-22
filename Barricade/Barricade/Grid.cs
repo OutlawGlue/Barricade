@@ -43,28 +43,6 @@ namespace AStarAlgorithm
             return grid[row, col];
         }
 
-        public List<Node> GetNeighbours(Node current)
-        {
-            int row = current.Row;
-            int col = current.Col;
-
-            if (row < 0 || row >= rows || col < 0 || col >= cols)
-                return new List<Node>();
-
-            List<Node> neighbours = new List<Node>();
-
-            if (row > 0)
-                neighbours.Add(grid[row - 1, col]);
-            if (row < rows - 1)
-                neighbours.Add(grid[row + 1, col]);
-            if (col > 0)
-                neighbours.Add(grid[row, col - 1]);
-            if (col < cols - 1)
-                neighbours.Add(grid[row, col + 1]);
-
-            return neighbours;
-        }
-
         public List<Node> GetNeighboursWithWalls(Node current, bool[,] horizontal, bool[,] vertical)
         {
             int row = current.Row;

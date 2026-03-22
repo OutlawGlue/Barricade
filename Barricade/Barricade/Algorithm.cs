@@ -12,6 +12,7 @@ namespace AStarAlgorithm
             this.grid = grid;
         }
 
+        //Will be used later for basic AI:
         public Path FindPath(Node start, Node end, bool[,] horizontal, bool[,] vertical)
         {
             //Reset all nodes:
@@ -74,7 +75,7 @@ namespace AStarAlgorithm
             return null; //No valid path exists
         }
 
-        //Check if any cell in target row reachable:
+        //Parent is never assigned since path reconstruction is not needed:
         public bool FindPathToRow(Node start, int targetRow, bool[,] horizontal, bool[,] vertical)
         {
             //Reset all nodes:
@@ -82,7 +83,6 @@ namespace AStarAlgorithm
             {
                 node.GCost = int.MaxValue;
                 node.HCost = 0;
-                node.Parent = null;
             }
 
             List<Node> openNodes = new List<Node>();
@@ -125,7 +125,6 @@ namespace AStarAlgorithm
                     {
                         neighbour.GCost = cost;
                         neighbour.HCost = Math.Abs(neighbour.Row - targetRow);
-                        neighbour.Parent = current;
 
                         if (!openNodes.Contains(neighbour))
                         {
