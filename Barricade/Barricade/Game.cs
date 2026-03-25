@@ -14,6 +14,9 @@ namespace Barricade
         private readonly Algorithm algorithm;
         private bool gameWon = false;
 
+        private enum WallAction
+        { None, Place, Escape }
+
         public Game(Grid grid, Board board, Player player1, Player player2)
         {
             this.grid = grid;
@@ -46,7 +49,7 @@ namespace Barricade
 
                 Console.Clear();
 
-                //Null move means the player placed a wall - turn ends without moving:
+                //Null means wall placed - turn ends:
                 if (move != null)
                 {
                     currentPlayer.Move(move);
@@ -67,14 +70,14 @@ namespace Barricade
             }
         }
 
-        //Returns null if the turn was spent placing a wall:
+        //Returns null if turn spent placing wall:
         private int[] AskMove(Player current, Player opponent)
         {
             int[] movement = new int[2];
 
             while (true)
             {
-                Console.WriteLine($"{current.Name} please make your move.");
+                Console.WriteLine($"{current.Name}'s move. You have {current.WallCount} walls left.");
                 ConsoleKeyInfo key = Console.ReadKey(true);
 
                 movement[0] = 0; movement[1] = 0;
@@ -97,8 +100,19 @@ namespace Barricade
                         break;
 
                     case ConsoleKey.Spacebar:
-                        WallMode();
-                        return null; //Wall placed - end turn immediately
+                        if (current.WallCount > 0)
+                        {
+                            bool placed = WallMode(current);
+                            if (placed)
+                                return null; //Wall placed so end turn
+
+                            //Escaped wall mode redraw board:
+                            Console.Clear();
+                            board.DisplayBoard(player1, player2, horizontalWalls, verticalWalls);
+                        }
+                        else
+                            Console.WriteLine("You have no walls left.");
+                        continue;
 
                     default: continue;
                 }
@@ -199,10 +213,11 @@ namespace Barricade
                 return false;
         }
 
-        private void WallMode()
+        //True if wall placed, false if player escaped:
+        private bool WallMode(Player current)
         {
-            int prevRow = 4;
-            int prevCol = 4;
+            int prevRow = grid.Rows / 2;
+            int prevCol = grid.Cols / 2;
             bool prevIsVert = false;
 
             while (true)
@@ -216,12 +231,15 @@ namespace Barricade
                     true, prevRow, prevCol, prevIsVert,
                     isValid);
 
-                bool wallMode = AskWall(ref prevRow, ref prevCol, ref prevIsVert);
+                WallAction action = AskWall(ref prevRow, ref prevCol, ref prevIsVert);
 
                 //Clamp value after preview moved:
                 ClampPreview(ref prevRow, ref prevCol, prevIsVert);
 
-                if (wallMode)
+                if (action == WallAction.Escape)
+                    return false; //Player cancelled so no wall placed
+
+                if (action == WallAction.Place)
                 {
                     if (!isValid)
                         continue;
@@ -238,12 +256,15 @@ namespace Barricade
                         horizontalWalls[prevRow, prevCol + 1] = true;
                     }
 
-                    break;
+                    //Decrement wall count after successful placement:
+                    current.WallCount--;
+
+                    return true;
                 }
             }
         }
 
-        private bool AskWall(ref int prevRow, ref int prevCol, ref bool prevIsVert)
+        private WallAction AskWall(ref int prevRow, ref int prevCol, ref bool prevIsVert)
         {
             ConsoleKeyInfo key = Console.ReadKey(true);
 
@@ -269,14 +290,17 @@ namespace Barricade
                     prevIsVert = !prevIsVert;
                     break;
 
+                case ConsoleKey.Spacebar:
+                    return WallAction.Escape; //Cancel wall placement
+
                 case ConsoleKey.Enter:
-                    return true; //Attempt placement
+                    return WallAction.Place; //Attempt placement
 
                 default:
                     break;
             }
 
-            return false;
+            return WallAction.None;
         }
 
         private void ClampPreview(ref int prevRow, ref int prevCol, bool isVert)
@@ -334,7 +358,7 @@ namespace Barricade
                     return false;
             }
 
-            //Temporarily place wall to test if both players still have a valid path:
+            //Temporarily place wall to test if both still have valid path:
             if (prevIsVert)
             {
                 verticalWalls[prevRow, prevCol] = true;

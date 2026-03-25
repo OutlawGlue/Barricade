@@ -10,6 +10,7 @@ namespace Barricade
         private int row;
         private int col;
         private readonly int targetRow;
+        private int wallCount;
 
         public Player(int startRow, int startCol, int targetRow, string name, char symbol, ConsoleColor colour)
         {
@@ -19,6 +20,8 @@ namespace Barricade
             this.row = startRow;
             this.col = startCol;
             this.targetRow = targetRow;
+
+            wallCount = 10;
         }
 
         public string Name
@@ -51,6 +54,12 @@ namespace Barricade
         public int TargetRow
         {
             get { return targetRow; }
+        }
+
+        public int WallCount
+        {
+            get { return wallCount; }
+            set { wallCount = value; }
         }
 
         public void Move(int[] movement)
