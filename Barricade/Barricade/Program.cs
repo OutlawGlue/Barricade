@@ -13,6 +13,16 @@ namespace Barricade
             Console.Write("Player 1 name: "); string p1Name = Console.ReadLine();
             Console.Write("Player 2 name: "); string p2Name = Console.ReadLine();
 
+            if (p1Name == null)
+            {
+                p1Name = "Player1";
+            }
+
+            if (p2Name == null || p2Name == p1Name)
+            {
+                p2Name = "Player2";
+            }
+
             //Create required objects:
             Grid grid = new Grid(gridSize[0], gridSize[1]);
             Board board = new Board(grid);
