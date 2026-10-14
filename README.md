@@ -2,7 +2,7 @@
 
 A turn-based strategy game inspired by [Barricade.gg](https://barricade.gg), built in C#.
 
-Players race to reach the opposite side of the board while placing walls to block their opponent. The game enforces all core rules (besides side-stepping) — including ensuring no wall placement can completely cut off either player's path to their goal.
+Players race to reach the opposite side of the board while placing walls to block their opponent. The game enforces all core rules (besides side-stepping) — including ensuring no wall placement can completely cut off either player's path to their goal, calculated using my implementation of the [A\* algorithm](https://github.com/OutlawGlue/A-Star-Algorithm). 
 
 ## Current Features
 
